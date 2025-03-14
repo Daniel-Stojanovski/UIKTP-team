@@ -298,38 +298,29 @@
                 showProblem = `${total}`;
             }
 
-        // else {
-        //         // Randomly determine how many operators the problem will have (between 1 and 3)
-        //         const numOperators = Math.floor(Math.random() * 3) + 1;
-        //
-        //         // Generate the problem with the random number of operators
-        //         const operators = ['+', '-', '*', '/'];
-        //         problem = Math.floor(Math.random() * 100) + 1; // Start with the first number
-        //
-        //         for (let i = 0; i < numOperators; i++) {
-        //             const operator = operators[Math.floor(Math.random() * operators.length)];
-        //             const num = Math.floor(Math.random() * 100) + 1;
-        //             problem = `${problem} ${operator} ${num}`;
-        //             showProblem = problem;
-        //         }
-        //     }
-        //
-
-            if (theme = 'multiply') {
-                let total = getRandom(2,99); //100
-                let left = getRandom(2,total) //5
-                let right = total / left; // 100/5 = 20
-                // let parts = equation.split("=");
-                // let left = parts[0].trim();
-                // let right = parts[1].trim();
-                //
-                // let simplifiedEquation = (${right}) - (${left.replace("x", "0")});
-                // let coefficient = left.match(/-?\d+(?=*x)/) || [1];
-                //
-                // let expr = (${simplifiedEquation}) / ${coefficient};
+            if (theme === "multiply") {
+                let total = getRandom(2,20); //9
+                let left = getRandom(2,total/2) //3
+                let right = total / left; // x = 3
 
                 problem = `${left} * x = ${total}`;
-                showProblem = `${left}*${right}==${total}`;
+                showProblem = `${total}/${left}`;
+            }
+
+            if (theme === "divide") {
+                // let left = getRandom(2,20);  //20
+                // let total = getRandom(2,total/2); //2
+                // let right = left / total;
+                //
+                // problem = `${total} = ${left} / x`;
+                // showProblem = `${total}*${right}`;
+
+                let total = getRandom(2,20);  //20
+                let left = getRandom(2,total/2); //2
+                let right = total / left;
+
+                problem = `${left} = ${total} / x`;
+                showProblem = `${left}*${right}`;
             }
 
             currentProblem = showProblem;
@@ -444,6 +435,7 @@
     <button onclick="generateProblem('sum', 1)">Sum to 10</button>
     <button onclick="generateProblem('sum', 2)">Sum to 20</button>
     <button onclick="generateProblem('multiply')">Multiply</button>
+    <button onclick="generateProblem('divide')">Divide</button>
     <button onclick="generateProblem('compare')">Bigger</button>
     <button onclick="generateProblem('missing')">Missing</button>
     <button onclick="generateProblem('parts', 1)">Partition</button>
