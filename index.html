@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Problem Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        let correctAnswer = null;
+        let currentProblem = '';
+        let theme = '';
+        let difficulty = '';
+        let problem = '';
+        let showProblem = '';
+
+        // Function to draw circles based on the number in the equation
+        function drawCircles(num1, num2) {
+            const visualcanvas = document.getElementById("visualCanvas");
+            const ctx2 = visualcanvas.getContext("2d");
+
+            // Define circle parameters
+            const radius = 15;
+            const padding = 20; // Padding between circles
+            const verticalPadding = 10; // Vertical space between rows of circles
+            const maxCirclesPerRow = 5; // Max number of circles per row
+
+            // Determine width of a single row of blue balls (up to 5 circles)
+            const blueRowWidth = Math.min(num1, maxCirclesPerRow) * (radius * 2 + padding);
+
+            // Calculate the number of rows for blue balls
+            const blueRows = Math.ceil(num1 / maxCirclesPerRow);
+            const blueHeight = blueRows * (radius * 2 + verticalPadding);
+
+            // Determine height of the green balls
+            const greenRows = Math.ceil(num2 / maxCirclesPerRow);
+            const greenHeight = greenRows * (radius * 2 + verticalPadding);
+
+            // Set the canvas size dynamically
+            visualcanvas.width = blueRowWidth + padding + maxCirclesPerRow * (radius * 2 + padding);
+            visualcanvas.height = Math.max(blueHeight, greenHeight) + 2 * padding;
+
+            // Clear previous drawings
+            ctx2.clearRect(0, 0, visualcanvas.width, visualcanvas.height);
+
+            // Draw border
+            ctx2.beginPath();
+            ctx2.rect(0, 0, visualcanvas.width, visualcanvas.height);
+            ctx2.strokeStyle = "black";
+            ctx2.lineWidth = 3;
+            ctx2.stroke();
+
+            // Draw blue balls
+            let xPos = padding;
+            let yPos = padding + radius;
+
+            for (let i = 0; i < num1; i++) {
+                ctx2.beginPath();
+                ctx2.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
+                ctx2.fillStyle = "blue";
+                ctx2.fill();
+                ctx2.stroke();
+
+                xPos += radius * 2 + padding;
+
+                // Move to the next row if needed
+                if ((i + 1) % maxCirclesPerRow === 0) {
+                    xPos = padding;
+                    yPos += radius * 2 + verticalPadding;
+                }
+            }
+
+            // Reset position for green balls
+            xPos = blueRowWidth + padding; // Now aligns correctly with the first blue row
+            yPos = padding + radius;
+
+            // Draw green balls
+            for (let i = 0; i < num2; i++) {
+                ctx2.beginPath();
+                ctx2.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
+                ctx2.fillStyle = "green";
+                ctx2.fill();
+                ctx2.stroke();
+
+                xPos += radius * 2 + padding;
+
+                // Move to the next row if needed
+                if ((i + 1) % maxCirclesPerRow === 0) {
+                    xPos = blueRowWidth + padding;
+                    yPos += radius * 2 + verticalPadding;
+                }
+            }
+        }
+
+        function drawSquares(num1, num2) {
+            const visualcanvas = document.getElementById("visualCanvas");
+            const ctx2 = visualcanvas.getContext("2d");
+
+            // Define square parameters
+            const size = 20; // Size of first set of squares (green)
+            const size2 = 20 * 10; // Size of blue squares (tens)
+            const padding = 10; // Padding between squares
+            const verticalPadding = 5; // Vertical space between rows
+            const maxSquaresPerRow = 10; // Max squares per row for blue
+
+            // Determine width of a single row of blue squares (up to 10 squares)
+            const blueRowWidth = Math.min(num1, maxSquaresPerRow) * (size + padding);
+
+            // Calculate the number of rows for blue squares (tens)
+            const blueRows = Math.ceil(num1 / maxSquaresPerRow);
+            const blueHeight = blueRows * (size2 + verticalPadding);
+
+            // Calculate the number of columns and height for green squares (ones)
+            const greenColumns = Math.ceil(num2 / 5); // Stack up to 5 per column
+            const greenHeight = 5 * (size + verticalPadding); // Height for green squares stack
+
+            // Set the canvas size dynamically
+            visualcanvas.width = blueRowWidth + greenColumns * (size + 2 * padding);
+            visualcanvas.height = Math.max(blueHeight, greenHeight) + 2 * padding;
+
+            // Clear previous drawings
+            ctx2.clearRect(0, 0, visualcanvas.width, visualcanvas.height);
+
+            // Draw border
+            ctx2.beginPath();
+            ctx2.rect(0, 0, visualcanvas.width, visualcanvas.height);
+            ctx2.strokeStyle = "black";
+            ctx2.lineWidth = 3;
+            ctx2.stroke();
+
+            // Align yPos for both blue and green squares from the bottom
+            let xPos = padding;
+            let yPos = visualcanvas.height - padding - size2; // Start from the bottom for blue squares (tens)
+
+            // Draw blue squares (tens)
+            for (let i = 0; i < num1; i++) {
+                ctx2.fillStyle = "blue";
+                ctx2.fillRect(xPos, yPos, size, size2);
+                ctx2.strokeRect(xPos, yPos, size, size2);
+
+                xPos += size + padding;
+
+                // Move to the next row if needed
+                if ((i + 1) % maxSquaresPerRow === 0) {
+                    xPos = padding;
+                    yPos += size2 + verticalPadding;
+                }
+            }
+
+            // Reset position for green squares (ones) to start from the bottom, aligned with blue squares
+            xPos = blueRowWidth + padding; // Aligns with the first blue row
+            yPos = visualcanvas.height - padding - size; // Align bottom of green squares with blue squares
+
+            // Draw green squares (ones) stacked vertically up to 5 in a column
+            for (let i = 0; i < num2; i++) {
+                ctx2.fillStyle = "green";
+                ctx2.fillRect(xPos, yPos, size, size);
+                ctx2.strokeRect(xPos, yPos, size, size);
+
+                yPos -= size + verticalPadding; // Move up with padding between boxes
+
+                // Move to the next column if needed (every 5 green squares)
+                if ((i + 1) % 5 === 0) {
+                    xPos += size + padding; // Move to the next column
+                    yPos = visualcanvas.height - padding - size; // Reset y position to bottom of next column
+                }
+            }
+        }
+
+        function drawShape(sides) {
+            const visualcanvas = document.getElementById("visualCanvas");
+            const ctx = visualcanvas.getContext("2d");
+
+            // Define some parameters
+            const centerX = visualcanvas.width / 2;
+            const centerY = visualcanvas.height / 2;
+            const radius = 50; // Distance from center to the vertices
+            const angle = (2 * Math.PI) / sides; // Angle between each side
+
+            ctx.clearRect(0, 0, visualcanvas.width, visualcanvas.height); // Clear the canvas before drawing
+
+            // Start drawing the polygon
+            ctx.beginPath();
+            for (let i = 0; i < sides; i++) {
+                // Calculate the x and y coordinates of each vertex
+                const x = centerX + radius * Math.cos(i * angle);
+                const y = centerY + radius * Math.sin(i * angle);
+
+                // Move to the first vertex
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y); // Draw lines to each vertex
+                }
+            }
+
+            // Close the path and draw the shape
+            ctx.closePath();
+            ctx.strokeStyle = "black"; // Set the stroke color
+            ctx.lineWidth = 2; // Set the line width
+            ctx.stroke(); // Draw the outline
+        }
+
+        function getRandom(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+        function generateProblem(theme, difficulty) {
+
+            if (theme === "sum") {
+                let total = getRandom(1, difficulty === 2 ? 20 : 10); // Random sum between 0 and 10
+                let num1 = getRandom(1, total); // First number
+                let num2 = total - num1; // Second number, lower/equal than remaining number to equal sum
+
+                problem = `${num1}+${num2}`;
+                showProblem = problem;
+
+                drawCircles(num1, num2); // Draw circles for visual counting
+
+            }
+
+            if (theme === "compare") {
+                let num1 = getRandom(1, 10);  // First number
+                let num2 = getRandom(1, 10);  // Second number
+                if (num2 === num1) {
+                    num2 = getRandom(1, 10);
+                }
+                problem = `Кој број е поголем? \n ${num1} или ${num2}`;
+                if (num1 > num2) {
+                    showProblem = `${num1}`;
+                } else {
+                    showProblem = `${num2}`;
+                }
+            }
+            
+            if (theme === "missing") {
+                let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                let pop = getRandom(1, 10);
+                const index = numbers.indexOf(pop);
+                problem = ``;
+
+                // Set up the canvas for drawing
+                const visualcanvas = document.getElementById("visualCanvas");
+                const ctx = visualcanvas.getContext("2d");
+
+                // Clear the canvas before drawing
+                ctx.clearRect(0, 0, visualcanvas.width, visualcanvas.height);
+
+                let xPos = 20; // Starting position for drawing numbers
+                let yPos = 50; // Starting vertical position for numbers
+                let fontSize = 20; // Starting font size for the first number
+                let totalWidth = 0; // Variable to track the total width needed for the canvas
+
+                // Calculate the total width for the canvas based on font size and space between numbers
+                for (let i = 0; i < numbers.length; i++) {
+                    totalWidth += fontSize + 10; // Add the width of the current number and padding
+                    fontSize += 5; // Increase the font size for the next number
+                }
+
+                // Set the width of the canvas to fit all the numbers
+                visualcanvas.width = totalWidth + 80; // Add some padding on the left and right sides
+
+                fontSize = 20; // Reset the font size to the starting value
+
+                // Draw the numbers on the canvas
+                for (let i = 0; i < numbers.length; i++) {
+                    ctx.font = `${fontSize}px Arial`; // Set the font size dynamically
+
+                    if (numbers[i] !== pop) {
+                        ctx.fillText(numbers[i], xPos, yPos); // Draw the number at the calculated position
+                    }
+
+                    fontSize += 5; // Increase the font size for the next number
+                    xPos += fontSize + 10; // Move horizontally to the right for the next number
+                }
+
+                problem = "Кој број недостасува?"; // This will store the complete problem with all numbers for later use
+                showProblem = pop; // Store the missing number
+            }
+
+            if (theme === "parts") {
+                let total = getRandom(11,99);
+                let huns = Math.floor(total / 100);
+                let tens = Math.floor(total / 10);
+                let ones = total % 10;
+
+                drawSquares(tens,ones);
+
+                problem = "Кој број е прикажан на сликата? Плавите стапчиња се десетки, зелените коцкички се единици!";
+                showProblem = `${huns}*100+${tens}*10+${ones}`;
+            }
+
+            if (theme === "shape") {
+                let total = getRandom(3,10);
+
+                drawShape(total);
+
+                problem = "Колку страни има овој повеќеаголник?";
+                showProblem = `${total}`;
+            }
+
+        // else {
+        //         // Randomly determine how many operators the problem will have (between 1 and 3)
+        //         const numOperators = Math.floor(Math.random() * 3) + 1;
+        //
+        //         // Generate the problem with the random number of operators
+        //         const operators = ['+', '-', '*', '/'];
+        //         problem = Math.floor(Math.random() * 100) + 1; // Start with the first number
+        //
+        //         for (let i = 0; i < numOperators; i++) {
+        //             const operator = operators[Math.floor(Math.random() * operators.length)];
+        //             const num = Math.floor(Math.random() * 100) + 1;
+        //             problem = `${problem} ${operator} ${num}`;
+        //             showProblem = problem;
+        //         }
+        //     }
+        //
+
+            if (theme = 'multiply') {
+                let total = getRandom(2,99); //100
+                let left = getRandom(2,total) //5
+                let right = total / left; // 100/5 = 20
+                // let parts = equation.split("=");
+                // let left = parts[0].trim();
+                // let right = parts[1].trim();
+                //
+                // let simplifiedEquation = (${right}) - (${left.replace("x", "0")});
+                // let coefficient = left.match(/-?\d+(?=*x)/) || [1];
+                //
+                // let expr = (${simplifiedEquation}) / ${coefficient};
+
+                problem = `${left} * x = ${total}`;
+                showProblem = `${left}*${right}==${total}`;
+            }
+
+            currentProblem = showProblem;
+            document.getElementById("problem").innerText = problem;
+
+            // Fetch the solution from Math.js API
+            fetchSolution(currentProblem);
+            console.log(fetchSolution(currentProblem));
+        }
+
+        function fetchSolution(problem) {
+            fetch(`https://api.mathjs.org/v4/?expr=${encodeURIComponent(problem)}`)
+                .then(response => response.text())
+                .then(answer => {
+                    correctAnswer = parseFloat(answer); // Store as a number
+                    console.log("Correct Answer from API:", correctAnswer); // Debugging log
+                })
+                .catch(error => console.error('Error fetching solution:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("drawCanvas");
+            const ctx = canvas.getContext("2d");
+            const clearButton = document.getElementById("clearCanvas");
+            const checkButton = document.getElementById("checkAnswer");
+            let drawing = false;
+
+            function startDrawing(event) {
+                drawing = true;
+                ctx.beginPath();
+                ctx.moveTo(event.offsetX, event.offsetY);
+            }
+
+            function draw(event) {
+                if (!drawing) return;
+                ctx.lineTo(event.offsetX, event.offsetY);
+                ctx.stroke();
+            }
+
+            function stopDrawing() {
+                drawing = false;
+            }
+
+            function clearCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function recognizeText() {
+                const dataUrl = canvas.toDataURL("image/png");
+                Tesseract.recognize(
+                    dataUrl,
+                    "eng",
+                    {
+                        logger: (m) => console.log(m),
+                    }
+                ).then(({data: {text}}) => {
+                    const userAnswer = parseFloat(text.trim());
+                    console.log("Recognized Answer:", userAnswer); // Debugging log
+                    if (!isNaN(userAnswer)) {
+                        checkAnswer(userAnswer);
+                    } else {
+                        document.getElementById("result").innerText = "Could not recognize a number.";
+                    }
+                });
+            }
+
+            function checkAnswer(userAnswer) {
+                const resultText = document.getElementById("result");
+                if (userAnswer === correctAnswer) {
+                    resultText.innerText = "Correct! 🎉";
+                    resultText.style.color = "green";
+                } else {
+                    resultText.innerText = `Wrong! The correct answer is ${correctAnswer}`;
+                    resultText.style.color = "red";
+                }
+            }
+
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mousemove", draw);
+            canvas.addEventListener("mouseup", stopDrawing);
+            canvas.addEventListener("mouseleave", stopDrawing);
+            clearButton.addEventListener("click", clearCanvas);
+            checkButton.addEventListener("click", recognizeText);
+        });
+
+        async function exportFile() {
+            // const html2pdf = await require('html2pdf.js');
+            var element = document.querySelector('#page');
+            const Filename = `problem.pdf`;
+            html2pdf().set({filename: Filename, jsPDF: { format: 'a4', orientation: 'landscape' }}).from(element).save();
+        }
+
+    </script>
+    <script src="https://unpkg.com/tesseract.js@2.1.0"></script>
+</head>
+<body id="page">
+    <h1>Math Problem Generator</h1>
+    <p>Solve the following problem:</p>
+    <canvas id="visualCanvas"></canvas>
+    <h1 id="problem"></h1>
+    <br><br><br>
+    <canvas id="drawCanvas" width="112" height="28" style="border:1px solid black; transform: scale(4)"></canvas>
+
+    <br><br><br><br>
+
+    <button id="clearCanvas">Clear</button>
+    <button id="checkAnswer">Check Answer</button>
+    <p id="result"></p>
+
+    <br><br>
+
+    <button onclick="generateProblem('sum', 1)">Sum to 10</button>
+    <button onclick="generateProblem('sum', 2)">Sum to 20</button>
+    <button onclick="generateProblem('multiply')">Multiply</button>
+    <button onclick="generateProblem('compare')">Bigger</button>
+    <button onclick="generateProblem('missing')">Missing</button>
+    <button onclick="generateProblem('parts', 1)">Partition</button>
+    <button onclick="generateProblem('shape')">Sides</button>
+    <button onclick="generateProblem()">Custom</button>
+    <br>
+    <button onclick="exportFile()">Export PDF</button>
+
+</body>
+</html>

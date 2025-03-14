@@ -1,0 +1,48 @@
+const puppeteer = require('puppeteer');
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+const PORT = 3000;
+
+app.use(cors({ origin: '*' })); // Enable CORS for all origins
+
+async function scrapeMathProblem() {
+    try {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        await page.goto('https://mathsbot.com/questionGenerator?id0=10&min0=0&max0=100', { waitUntil: 'domcontentloaded' });
+
+        // Extract the math problem inside the <mjx-math> tag
+        const problem = await page.evaluate(() => {
+            const element = document.querySelector('#a0 > div > mjx-container > mjx-math'); // Selects the correct tag
+            return element ? element.textContent.trim() : null;
+        });
+
+        await browser.close();
+
+        if (!problem) {
+            throw new Error("No math problem found!");
+        }
+
+        return problem;
+    } catch (error) {
+        console.error("Scraping Error:", error);
+        throw new Error("Failed to scrape math problems.");
+    }
+}
+
+// API Endpoint to serve the math problem
+app.get('/get-math-problem', async (req, res) => {
+    try {
+        const problem = await scrapeMathProblem();
+        res.json({ problem });
+    } catch (error) {
+        console.error("API Error:", error);
+        res.status(500).json({ error: "Internal Server Error. Check server logs." });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`✅ Scraper server running at http://localhost:${PORT}`);
+});

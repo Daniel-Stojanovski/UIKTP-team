@@ -1,0 +1,131 @@
+
+>
+↑
+Math Problem Validator
+m math.js an extensive math libr
+π Maths Question Generator
+X
+Math Problem Generator
+X
+Image to Text (Extract Text From X
++
+חה
+o-
+mathsbot.com/questionGenerator?id=10&min0=0&max0=100
+6 VP ispitna
+Google Translate
+Vite + React
+SchoolOCR in
+Question Generator
+Questions:
+5
+Columns: 1
+Font Size: 22
+Create Questions
+Topic Menu Show Answers
+Enjoy using the site?
+Become a member and enjoy access to all the resources on the site ad-free!
+Enter code here Go
+A1
+A2
+-4 x 7
+Calculate: (-4)+8+5
+-132: 12
+-
+A3
+A4
+-23 x
+- 20
+A5
+29 × - 2
+Home | Membership | Privacy | Contact | © 2013-2025
+Π
+X
+:
+INSPO
+R LO
+Elements Console Sources <!DOCTYPE html>
+E-Quip • Одела Network Performance Memory Application
+Boban
+5 Распоред
+>>
+Privacy and security
+Lighthouse >>
+R 1
+: X
+Styles >>
+</head>
+YF hov .cls ▲
+<html lang="en" nighteye="disabled"> <head>
+▼ <body>
+‣
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JYHV7BKFZS"></script> <script></script>
+▸ <div class="iconMenu"></div>
+▸ <section id="controls" class="controls border"> </section>
+"<section id="questionsIWB" style="display: block;">
+element.sty le {
+}
+.MJX -TEX {
+<style>
+font-family
+MJXZERO,
+▼<div>
+<table>
+'<tbody> ▼<tr>
+<th style="font-size: 22px;" title="Click to replace question" class="questionNumber" onclick="refreshQuestion(0, e)">A1</th>
+<td style="font-size:22px;" title="Click to toggle answer. Shift-click to launch camera tool." class="question" onclick="toggleAnswer(0)" id="ae">
+▼<div>
+<mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="71" style="font -size: 117.2%; position: relative;">
+|<mjx-math class="MJX-TEX" aria-hidden="true"> </mjx-math> == $8
+►<mjx-assistive-mml unselectable="on" display="inline"></mjx-assistive-mml>
+</mjx-containers
+</div>
+</td> </tr>
+betre/tra
+b<tr> </tr>
+betraye/tra
+betra</tra </tbody> </table> </div>
+</section>
+▸ <footer id="footer"></footer>
+<script></script>
+</body> </html>
+MJXTEX;
+}
+jx-
+<style>
+math
+{
+display: inline-
+block;
+text-align
+: left; line-height
+: 0; text-indent
+: 0px;
+font-style
+normal; font-weight
+normal; font-size
+: 100%; font-size-
+adjust
+: none;
+letter-
+spacing
+normal;
+border-
+collapse
+collapse; overflow
+wrap:
+normal;
+word-
+spacing
+normal; white-space
+: ►
+nowrap; direction : 1tr;
+padding: ▸
+1px
+0px;
+}
+Inherited from ...
+style
+html body section#questionsIWB div table tbody tr_td#a0.question div mjx-container.MathJax.CtxtMenu_Attached_0 mjx-math.MJX-TEX
+attribute {
